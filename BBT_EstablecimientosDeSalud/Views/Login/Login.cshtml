@@ -1,0 +1,63 @@
+﻿@model BBT_EstablecimientosDeSalud.Models.DB.Usuario
+@{
+    ViewData["Title"] = "Login";
+}
+@*<div class="row justify-content-center">
+    <div class="col-lg-6 " style="background-color: #F6F7F8; margin: auto; padding: 100px">
+        <h1 class="text-rigth mb-4">Iniciar sesión</h1>
+        <form asp-controller="Login" asp-action="Login" method="post">
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label asp-for="Contrasena">Contraseña</label>
+                <input asp-for="Contrasena" class="form-control" type="password" />
+                <span asp-validation-for="Contrasena" class="text-danger"></span>
+            </div>
+            <div style=" margin-top: 20px; text-align: center;">
+                <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+            </div>
+
+        </form>
+    </div>
+</div>*@
+<body style="padding:0; margin:0;">
+    <main class="login-design">
+        <div class="waves">
+            <img src="assets/loginPerson.png" alt="" />
+        </div>
+        <div class="login">
+            <div class="login-data">          
+                <img src="assets/Wave.png" alt="" />
+                <h1 style="color:#287D97">Iniciar Sesión</h1>
+                </br>
+                <form  method="post" action="#" class="login-form">
+                    <div class="input-group">
+                        <label class="input-fill">    
+                            <label asp-for="Email" style="color:#287D97">Ingrese su Correo Electronico</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <span class="input-label"></span>
+                            <i class="fas fa-envelope"></i>
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-fill">
+                            <label asp-for="Contrasena" style="color:#287D97">Ingrese su contraseña</label>
+                            <input asp-for="Contrasena" class="form-control" type="password" />
+                            <span asp-validation-for="Contrasena" class="text-danger"></span>
+                            <span class="input-label"></span>                      
+                            <i class="fas fa-lock"></i>
+                        </label>
+                    </div>                   
+                    
+                    <input type="submit" value="Iniciar Sesión" class="btn-login" /> </br>
+                    <a href="#">¿Necesitas una Cuenta?</a>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
