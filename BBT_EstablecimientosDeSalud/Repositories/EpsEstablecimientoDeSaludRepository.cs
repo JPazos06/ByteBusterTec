@@ -1,49 +1,77 @@
 ﻿using BBT_EstablecimientosDeSalud.Models.DB;
 using Microsoft.EntityFrameworkCore;
+
 namespace BBT_EstablecimientosDeSalud.Repositories
 {
+    /// <summary>
+    /// Define la interfaz para el repositorio de relación entre EPS y Establecimientos de Salud.
+    /// </summary>
     public interface EpsEstablecimientoDeSaludRepository
     {
-        EpsEstablecimientoDeSalud BuscarId(int EstId);
-        Ep BuscarIdEps(int EstId);
+        /// <summary>
+        /// Busca una relación entre EPS y Establecimiento de Salud por ID de establecimiento.
+        /// </summary>
+        /// <param name="establecimientoId">ID del establecimiento de salud a buscar.</param>
+        /// <returns>La relación EPS-Establecimiento correspondiente al ID proporcionado.</returns>
+        EpsEstablecimientoDeSalud BuscarId(int establecimientoId);
+
+        /// <summary>
+        /// Busca una EPS asociada a un Establecimiento de Salud por ID de establecimiento.
+        /// </summary>
+        /// <param name="establecimientoId">ID del establecimiento de salud para el que se busca la EPS asociada.</param>
+        /// <returns>La EPS asociada al establecimiento de salud.</returns>
+        Ep BuscarIdEps(int establecimientoId);
     }
+
+    /// <summary>
+    /// Implementación del repositorio de relación entre EPS y Establecimientos de Salud.
+    /// </summary>
     public class EpsEstablecimientodeSaludRepositoryimpl : EpsEstablecimientoDeSaludRepository
     {
         private readonly BbtEstablecimientosDeSaludContext _dbContext;
 
+        /// <summary>
+        /// Constructor de la clase EpsEstablecimientodeSaludRepositoryimpl.
+        /// </summary>
+        /// <param name="dbContext">Contexto de base de datos para acceder a las entidades.</param>
         public EpsEstablecimientodeSaludRepositoryimpl(BbtEstablecimientosDeSaludContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public EpsEstablecimientoDeSalud BuscarId(int EstId)
+
+        /// <inheritdoc />
+        public EpsEstablecimientoDeSalud BuscarId(int establecimientoId)
         {
-            EpsEstablecimientoDeSalud objEp = new EpsEstablecimientoDeSalud();
+            EpsEstablecimientoDeSalud epsEstablecimiento = new EpsEstablecimientoDeSalud();
             try
             {
-                var EstSalud = from datos in _dbContext.EpsEstablecimientoDeSaluds select datos;
-                objEp = EstSalud.Where(e => e.EstablecimientoId == EstId).FirstOrDefault();
+                var establecimientoDatos = from datos in _dbContext.EpsEstablecimientoDeSaluds select datos;
+                epsEstablecimiento = establecimientoDatos.Where(e => e.EstablecimientoId == establecimientoId).FirstOrDefault();
             }
             catch (Exception ex)
             {
+                // Manejo de excepciones
                 throw;
             }
-            return objEp;
+            return epsEstablecimiento;
         }
-        public Ep BuscarIdEps(int EstId)
+
+        /// <inheritdoc />
+        public Ep BuscarIdEps(int establecimientoId)
         {
-            Ep objEp = new Ep();
+            Ep eps = new Ep();
             try
             {
-                objEp = _dbContext.EpsEstablecimientoDeSaluds
+                eps = _dbContext.EpsEstablecimientoDeSaluds
                         .Include(e => e.Eps)
-                        .FirstOrDefault(e => e.EstablecimientoId == EstId)?.Eps;
+                        .FirstOrDefault(e => e.EstablecimientoId == establecimientoId)?.Eps;
             }
             catch (Exception ex)
             {
+                // Manejo de excepciones
                 throw;
             }
-            return objEp;
+            return eps;
         }
     }
-
 }

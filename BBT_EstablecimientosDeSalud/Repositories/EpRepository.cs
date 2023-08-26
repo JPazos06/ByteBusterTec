@@ -1,46 +1,75 @@
 ﻿using BBT_EstablecimientosDeSalud.Models.DB;
 using Microsoft.EntityFrameworkCore;
+
 namespace BBT_EstablecimientosDeSalud.Repositories
 {
+    /// <summary>
+    /// Define la interfaz para el repositorio de Entidades Promotoras de Salud (EPS).
+    /// </summary>
     public interface EpRepository
     {
-        Ep BuscarId(int EpsId);
+
+        /// <summary>
+        /// Busca una EPS por su ID.
+        /// </summary>
+        /// <param name="epsId">ID de la EPS a buscar.</param>
+        /// <returns>La EPS correspondiente al ID proporcionado.</returns>
+        Ep BuscarId(int epsId);
+
+        /// <summary>
+        /// Lista todas las EPS almacenadas.
+        /// </summary>
+        /// <returns>Una lista de objetos EPS.</returns>
         List<Ep> Listar();
     }
+
+    /// <summary>
+    /// Implementación del repositorio de Entidades Promotoras de Salud (EPS).
+    /// </summary>
     public class EpRepositoryimpl : EpRepository
     {
         private readonly BbtEstablecimientosDeSaludContext _dbContext;
+
+        /// <summary>
+        /// Constructor de la clase EpRepositoryimpl.
+        /// </summary>
+        /// <param name="dbContext">Contexto de base de datos para acceder a las entidades.</param>
         public EpRepositoryimpl(BbtEstablecimientosDeSaludContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public Ep BuscarId(int EpsId)
+
+        /// <inheritdoc />
+        public Ep BuscarId(int epsId)
         {
-            Ep objEps = new Ep();
+            Ep eps = new Ep();
             try
             {
-                var EpsID = from datos in _dbContext.Eps select datos;
-                objEps = EpsID.Where(e => e.Id == EpsId).FirstOrDefault();
+                var epsDatos = from datos in _dbContext.Eps select datos;
+                eps = epsDatos.Where(e => e.Id == epsId).FirstOrDefault();
             }
             catch (Exception ex)
             {
                 throw;
             }
-            return objEps;
+            return eps;
         }
+
+        /// <inheritdoc />
         public List<Ep> Listar()
         {
-            List<Ep> objEps = new List<Ep>();
+            List<Ep> listEps = new List<Ep>();
             try
             {
-                var Eps = from datos in _dbContext.Eps select datos;
-                objEps = Eps.ToList();
+                var epsDatos = from datos in _dbContext.Eps select datos;
+                listEps = epsDatos.ToList();
             }
             catch (Exception ex)
             {
+                // Manejo de excepciones
                 throw;
             }
-            return objEps;
+            return listEps;
         }
     }
 }

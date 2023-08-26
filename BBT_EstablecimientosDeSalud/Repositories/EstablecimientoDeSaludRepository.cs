@@ -3,13 +3,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BBT_EstablecimientosDeSalud.Repositories
 {
+    /// <summary>
+    /// Define la interfaz para el repositorio de Establecimientos de Salud.
+    /// </summary>
     public interface EstablecimientoDeSaludRepository
     {
-        List<EstablecimientoDeSalud> Buscar(string criterio, int epsid);
-        EstablecimientoDeSalud BuscarId(int EstId);
-        List<EstablecimientoDeSalud> Listar(int epsid);
+        List<EstablecimientoDeSalud> Buscar(string criterio, int epsId);
+        EstablecimientoDeSalud BuscarId(int establecimientoId);
+        List<EstablecimientoDeSalud> Listar(int epsId);
         List<EstablecimientoDeSalud> ListarMap();
     }
+
+    /// <summary>
+    /// Implementación del repositorio de Establecimientos de Salud.
+    /// </summary>
     public class EstablecimientodeSaludRepositoryimpl : EstablecimientoDeSaludRepository
     {
         private readonly BbtEstablecimientosDeSaludContext _dbContext;
@@ -19,91 +26,113 @@ namespace BBT_EstablecimientosDeSalud.Repositories
             _dbContext = dbContext;
         }
 
-        public List<EstablecimientoDeSalud> Buscar(string criterio, int epsid)
+        /// <inheritdoc />
+        public List<EstablecimientoDeSalud> Buscar(string criterio, int epsId)
         {
-            List<EstablecimientoDeSalud> ListEst = new List<EstablecimientoDeSalud>();
+            List<EstablecimientoDeSalud> listEstablecimiento = new List<EstablecimientoDeSalud>();
             try
             {
-                var EstSalud = from datos in _dbContext.EstablecimientoDeSaluds
+                var establecimientoDatos = from datos in _dbContext.EstablecimientoDeSaluds
                                join epsEst in _dbContext.EpsEstablecimientoDeSaluds on datos.Id equals epsEst.EstablecimientoId
-                               where epsEst.EpsId == epsid &&
+                               where epsEst.EpsId == epsId &&
                                      (datos.Nombre.ToLower().Contains(criterio.ToLower()) || datos.Descripcion.ToLower().Contains(criterio.ToLower()))
                                select datos;
 
-                ListEst = EstSalud.ToList();
+                listEstablecimiento = establecimientoDatos.ToList();
             }
             catch (Exception ex)
             {
+                // Manejo de excepciones
                 throw;
             }
-            return ListEst;
+            return listEstablecimiento;
         }
-        public EstablecimientoDeSalud BuscarId(int EstId)
+
+        /// <inheritdoc />
+        public EstablecimientoDeSalud BuscarId(int estId)
         {
-            EstablecimientoDeSalud objEst = new EstablecimientoDeSalud();
+            EstablecimientoDeSalud establecimientoDeSalud = new EstablecimientoDeSalud();
             try
             {
-                objEst = _dbContext.EstablecimientoDeSaluds
+                establecimientoDeSalud = _dbContext.EstablecimientoDeSaluds
                     .Include(e => e.EpsEstablecimientoDeSaluds)
-                    .FirstOrDefault(e => e.Id == EstId);
+                    .FirstOrDefault(e => e.Id == estId);
             }
             catch (Exception ex)
             {
+                // Manejo de excepciones
                 throw;
             }
-            return objEst;
+
+            return establecimientoDeSalud;
         }
-        public List<EstablecimientoDeSalud> Listar(int epsid)
+
+        /// <inheritdoc />
+        public List<EstablecimientoDeSalud> Listar(int epsId)
         {
-            List<EstablecimientoDeSalud> objEst = new List<EstablecimientoDeSalud>();
+            List<EstablecimientoDeSalud> listEstablecimiento = new List<EstablecimientoDeSalud>();
             try
             {
-                var EstSalud = from datos in _dbContext.EstablecimientoDeSaluds
+                var establecimientoDatos = from datos in _dbContext.EstablecimientoDeSaluds
                                join epsEst in _dbContext.EpsEstablecimientoDeSaluds on datos.Id equals epsEst.EstablecimientoId
-                               where epsEst.EpsId == epsid
+                               where epsEst.EpsId == epsId
                                select datos;
 
-                objEst = EstSalud.ToList();
+                listEstablecimiento = establecimientoDatos.ToList();
             }
             catch (Exception ex)
             {
+                // Manejo de excepciones
                 throw;
             }
-            return objEst;
+            return listEstablecimiento;
         }
+
+        /// <inheritdoc />
         public List<EstablecimientoDeSalud> ListarMap()
         {
-            List<EstablecimientoDeSalud> objEst = new List<EstablecimientoDeSalud>();
+            List<EstablecimientoDeSalud> listEstablecimiento = new List<EstablecimientoDeSalud>();
             try
             {
-                var EstSalud = from datos in _dbContext.EstablecimientoDeSaluds select datos;
-                objEst = EstSalud.ToList();
+                var establecimientoDatos = from datos in _dbContext.EstablecimientoDeSaluds select datos;
+                listEstablecimiento = establecimientoDatos.ToList();
             }
             catch (Exception ex)
             {
+                // Manejo de excepciones
                 throw;
             }
-            return objEst;
+            return listEstablecimiento;
         }
     }
 
-
+    /// <summary>
+    /// Define la interfaz para la unidad de trabajo de Establecimientos de Salud.
+    /// </summary>
     public interface IUnitOfWorkEst : IDisposable
     {
         EstablecimientoDeSaludRepository EstablecimientoDeSaludRepository { get; }
         void SaveChanges();
     }
 
+    /// <summary>
+    /// Implementación de la unidad de trabajo de Establecimientos de Salud.
+    /// </summary>
     public class UnitOfWorkEst : IUnitOfWorkEst
     {
         private readonly BbtEstablecimientosDeSaludContext _dbContext;
         private EstablecimientoDeSaludRepository _establecimientodesaludrepository;
 
+        /// <summary>
+        /// Constructor de la clase UnitOfWorkEst.
+        /// </summary>
+        /// <param name="dbContext">Contexto de base de datos para acceder a las entidades.</param>
         public UnitOfWorkEst(BbtEstablecimientosDeSaludContext dbContext)
         {
             _dbContext = dbContext;
         }
 
+        /// <inheritdoc />
         public EstablecimientoDeSaludRepository EstablecimientoDeSaludRepository
         {
             get
@@ -116,11 +145,13 @@ namespace BBT_EstablecimientosDeSalud.Repositories
             }
         }
 
+        /// <inheritdoc />
         public void SaveChanges()
         {
             _dbContext.SaveChanges();
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _dbContext.Dispose();

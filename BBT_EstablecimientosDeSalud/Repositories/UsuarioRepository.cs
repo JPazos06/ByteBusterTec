@@ -3,12 +3,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BBT_EstablecimientosDeSalud.Repositories
 {
+    /// <summary>
+    /// Define la interfaz para el repositorio de usuarios.
+    /// </summary>
     public interface UsuarioRepository
     {
+        /// <summary>
+        /// Registra un usuario en la base de datos.
+        /// </summary>
+        /// <param name="usuario">Objeto Usuario que se registrará.</param>
         void Registrar(Usuario usuario);
-        Usuario Login(string user, string pass);
-        Usuario BuscarId(int usId);
+
+        /// <summary>
+        /// Realiza el inicio de sesión de un usuario.
+        /// </summary>
+        /// <param name="usuarioCuenta">Nombre de usuario o correo electrónico.</param>
+        /// <param name="contrasenaCuenta">Contraseña del usuario.</param>
+        /// <returns>El objeto Usuario correspondiente al inicio de sesión.</returns>
+        Usuario Login(string usuarioCuenta, string contrasenaCuenta);
+
+        /// <summary>
+        /// Busca un usuario por su ID.
+        /// </summary>
+        /// <param name="usuarioId">ID del usuario a buscar.</param>
+        /// <returns>El objeto Usuario correspondiente al ID proporcionado.</returns>
+        Usuario BuscarId(int usuarioId);
     }
+
+    /// <summary>
+    /// Implementación del repositorio de usuarios.
+    /// </summary>
     public class UsuarioRepositoryimpl : UsuarioRepository
     {
         private readonly BbtEstablecimientosDeSaludContext _dbContext;
@@ -18,6 +42,7 @@ namespace BBT_EstablecimientosDeSalud.Repositories
             _dbContext = dbContext;
         }
 
+        /// <inheritdoc />
         public void Registrar(Usuario usuario)
         {
             try
@@ -38,13 +63,14 @@ namespace BBT_EstablecimientosDeSalud.Repositories
             }
         }
 
-        public Usuario Login(string user, string pass)
+        /// <inheritdoc />
+        public Usuario Login(string usuarioCuenta, string contrasenaCuenta)
         {
             Usuario usuario = new Usuario();
             try
             {
-                var usuarios = from datos in _dbContext.Usuarios select datos;
-                usuario = usuarios.Where(u => u.Email == user && u.Contrasena == pass).FirstOrDefault();
+                var usuarioDatos = from datos in _dbContext.Usuarios select datos;
+                usuario = usuarioDatos.Where(u => u.Email == usuarioCuenta && u.Contrasena == contrasenaCuenta).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -53,38 +79,50 @@ namespace BBT_EstablecimientosDeSalud.Repositories
             return usuario;
         }
 
-        public Usuario BuscarId(int usId)
+        /// <inheritdoc />
+        public Usuario BuscarId(int usuarioId)
         {
-            Usuario objUs = new Usuario();
+            Usuario usuario = new Usuario();
             try
             {
-                var usID = from datos in _dbContext.Usuarios select datos;
-                objUs = usID.Where(e => e.Id == usId).FirstOrDefault();
+                var usuarioDatos = from datos in _dbContext.Usuarios select datos;
+                usuario = usuarioDatos.Where(e => e.Id == usuarioId).FirstOrDefault();
             }
             catch (Exception ex)
             {
                 throw;
             }
-            return objUs;
+            return usuario;
         }
     }
 
+    /// <summary>
+    /// Define la interfaz para la unidad de trabajo.
+    /// </summary>
     public interface IUnitOfWork : IDisposable
     {
         UsuarioRepository UsuarioRepositoryimpl { get; }
         void SaveChanges();
     }
 
+    /// <summary>
+    /// Implementación de la unidad de trabajo.
+    /// </summary>
     public class UnitOfWork : IUnitOfWork
     {
         private readonly BbtEstablecimientosDeSaludContext _dbContext;
         private UsuarioRepository _usuarioRepository;
 
+        /// <summary>
+        /// Constructor de la clase UnitOfWork.
+        /// </summary>
+        /// <param name="dbContext">Contexto de base de datos para acceder a las entidades.</param>
         public UnitOfWork(BbtEstablecimientosDeSaludContext dbContext)
         {
             _dbContext = dbContext;
         }
 
+        /// <inheritdoc />
         public UsuarioRepository UsuarioRepositoryimpl
         {
             get
@@ -97,11 +135,13 @@ namespace BBT_EstablecimientosDeSalud.Repositories
             }
         }
 
+        /// <inheritdoc />
         public void SaveChanges()
         {
             _dbContext.SaveChanges();
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _dbContext.Dispose();

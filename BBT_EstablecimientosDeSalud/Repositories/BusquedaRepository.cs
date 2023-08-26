@@ -3,19 +3,41 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BBT_EstablecimientosDeSalud.Repositories
 {
+    /// <summary>
+    /// Define la interfaz para el repositorio de búsquedas.
+    /// </summary>
     public interface BusquedaRepository
     {
+        /// <summary>
+        /// Registra una búsqueda en la base de datos.
+        /// </summary>
+        /// <param name="busqueda">Objeto Busquedum que se registrará.</param>
         void Registrar(Busquedum busqueda);
+
+        /// <summary>
+        /// Lista todas las búsquedas almacenadas en la base de datos.
+        /// </summary>
+        /// <returns>Lista de objetos Busquedum.</returns>
         List<Busquedum> ListarBusqueda();
     }
+
+    /// <summary>
+    /// Implementación del repositorio de búsquedas.
+    /// </summary>
     public class BusquedaRepositoryimpl : BusquedaRepository
     {
         private readonly BbtEstablecimientosDeSaludContext _dbContext;
 
+        /// <summary>
+        /// Constructor de la clase BusquedaRepositoryimpl.
+        /// </summary>
+        /// <param name="dbContext">Contexto de base de datos para acceder a las entidades.</param>
         public BusquedaRepositoryimpl(BbtEstablecimientosDeSaludContext dbContext)
         {
             _dbContext = dbContext;
         }
+
+        /// <inheritdoc />
         public void Registrar(Busquedum busqueda)
         {
             try
@@ -28,19 +50,22 @@ namespace BBT_EstablecimientosDeSalud.Repositories
                 throw;
             }
         }
+
+        /// <inheritdoc />
         public List<Busquedum> ListarBusqueda()
         {
-            List<Busquedum> objBus = new List<Busquedum>();
+            List<Busquedum> listBusqueda = new List<Busquedum>();
             try
             {
-                var Bus = from datos in _dbContext.Busqueda select datos;
-                objBus = Bus.ToList();
+                var busquedaDatos = from datos in _dbContext.Busqueda select datos;
+                listBusqueda = busquedaDatos.ToList();
             }
             catch (Exception ex)
             {
+                // Manejo de excepciones
                 throw;
             }
-            return objBus;
+            return listBusqueda;
         }
     }
 }
